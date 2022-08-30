@@ -84,8 +84,8 @@ public class Time extends JavaPlugin implements Listener {
 				} else if (args.length == 1) {
 					if (args[0].equals("set") || args[0].equals("modify")) {
 						if (args[0].equals("modify")) {
-							res.add("day");
-							res.add("night");
+							res.add("modify day");
+							res.add("modify night");
 						}
 					} else {
 						if (match(args[0], "set")) {
@@ -105,7 +105,7 @@ public class Time extends JavaPlugin implements Listener {
 							res.add("night");
 						}
 					}
-				} else if (args.length == 3) {
+				} else if (args.length == 4) {
 					if (args[0].equals("modify")) {
 						if (match(args[1], "day") || match(args[1], "night")) {
 							res.add("seconds");
