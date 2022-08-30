@@ -1,0 +1,10 @@
+main: com.mikemik44.Time
+name: TSDay
+version: 1.0
+decription: adds discord chat formats
+commands:
+  tsday:
+    description: Sets the time or modify time schedule
+    aliases: [tsday, tsd]
+    permission: op
+    usage: "Usage: /tsday [set|modify] [number|day|night] [number]"
