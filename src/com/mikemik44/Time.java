@@ -37,7 +37,7 @@ public class Time extends JavaPlugin implements Listener {
 					}
 					WorldData wd = worldData.get(w.getName());
 
-					double dayCalc = 12700.0 / (20 * wd.timeForDayToEnd);
+					double dayCalc = 12000.0 / (20 * wd.timeForDayToEnd);
 					double nightCalc = 12000.0 / (20 * wd.timeForNightToEnd);
 					double time = wd.timer;
 					if (wd.changer != -1) {
