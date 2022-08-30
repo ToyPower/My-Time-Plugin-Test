@@ -167,19 +167,20 @@ public class Time extends JavaPlugin implements Listener {
 										num = -num;
 									}
 									if (data.length > 4) {
-										if (data[3].equals("minutes") || data[3].equals("minute")) {
+										if (data[4].equals("minutes") || data[4].equals("minute")) {
 											num *= 60;
-										} else if (data[3].equals("hours") || data[3].equals("hour")) {
+										} else if (data[4].equals("hours") || data[4].equals("hour")) {
 											num *= 60 * 60;
-										} else if (data[3].equals("days") || data[3].equals("day")) {
+										} else if (data[4].equals("days") || data[4].equals("day")) {
 											num *= 60 * 60 * 24;
-										} else if (data[3].equals("ticks") || data[3].equals("tick")) {
+										} else if (data[4].equals("ticks") || data[4].equals("tick")) {
 											num /= 20.0;
-										} else if (data[3].equals("seconds") || data[3].equals("second")) {
+										} else if (data[4].equals("seconds") || data[4].equals("second")) {
 
 										} else {
-											p.sendMessage("§cUnknown time unit " + data[3]
+											p.sendMessage("§cUnknown time unit " + data[4]
 													+ "! Please use seconds, minutes, hours, days, or ticks.");
+											return;
 										}
 									}
 									WorldData wd = worldData.get(p.getWorld().getName());
@@ -202,19 +203,20 @@ public class Time extends JavaPlugin implements Listener {
 										num = -num;
 									}
 									if (data.length > 4) {
-										if (data[3].equals("minutes") || data[3].equals("minute")) {
+										if (data[4].equals("minutes") || data[3].equals("minute")) {
 											num *= 60;
-										} else if (data[3].equals("hours") || data[3].equals("hour")) {
+										} else if (data[4].equals("hours") || data[4].equals("hour")) {
 											num *= 60 * 60;
-										} else if (data[3].equals("days") || data[3].equals("day")) {
+										} else if (data[4].equals("days") || data[4].equals("day")) {
 											num *= 60 * 60 * 24;
-										} else if (data[3].equals("ticks") || data[3].equals("tick")) {
+										} else if (data[4].equals("ticks") || data[4].equals("tick")) {
 											num /= 20.0;
-										} else if (data[3].equals("seconds") || data[3].equals("second")) {
+										} else if (data[4].equals("seconds") || data[4].equals("second")) {
 
 										} else {
-											p.sendMessage("§cUnknown time unit " + data[3]
+											p.sendMessage("§cUnknown time unit " + data[4]
 													+ "! Please use seconds, minutes, hours, days, or ticks.");
+											return;
 										}
 									}
 									WorldData wd = worldData.get(p.getWorld().getName());
