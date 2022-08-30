@@ -1,13 +1,17 @@
 package com.mikemik44;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,9 +25,6 @@ public class Time extends JavaPlugin implements Listener {
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
 		BukkitRunnable r = new BukkitRunnable() {
-			private int timer = -1;
-			private double timeInNight;
-			private double timeInDay;
 			private boolean day = true;
 			HashMap<String, Double> worldData = new HashMap<>();
 
@@ -35,14 +36,14 @@ public class Time extends JavaPlugin implements Listener {
 						tfn.put(name, 60 * 10.0);
 					}
 					double dayCalc = 12700.0 / (20 * tfd.get(name));
-					double nightCalc = (12000.0 - 700) / (20 * tfn.get(name));
+					double nightCalc = 12000.0 / (20 * tfn.get(name));
 					double time = worldData.getOrDefault(name, 0.0);
 					if (nt.containsKey(name)) {
 						long l = nt.get(name);
 						nt.remove(name);
-						if (l > 12700) {
+						if (l > 12000) {
 							day = false;
-							l -= 12700;
+							l -= 12000;
 							time = l / nightCalc;
 						} else {
 							day = true;
@@ -60,114 +61,66 @@ public class Time extends JavaPlugin implements Listener {
 					if (day) {
 						w.setTime((long) (time * dayCalc));
 					} else {
-						w.setTime((long) (time * nightCalc) + 12700);
+						w.setTime((long) (time * nightCalc) + 12000);
 					}
 					time++;
 					worldData.put(name, time);
-					// w.setTime(24000);
 				}
 			}
-//				timeInNight = 12000.0 / (20 * timeForNight);
-//				timeInDay = 12000.0 / (20 * timeForDay);
-//				if (act) {
-//					act = false;
-//					long time = newTime;
-//					if (time > 12000) {
-//						time -= 12000;
-//						day = false;
-//						timer = (int) (time / timeInNight);
-//					} else {
-//						timer = (int) (time / timeInDay);
-//					}
-//				}
-//				if (timer == -1) {
-//					long time = Bukkit.getWorlds().get(0).getTime();
-//					if (time > 12000) {
-//						time -= 12000;
-//						day = false;
-//						timer = (int) (time / timeInNight);
-//					} else {
-//						timer = (int) (time / timeInDay);
-//						day = true;
-//					}
-//
-//				}
-//				if (day) {
-//
-//					long diff = timer;
-//					timer++;
-//					if (diff > 20 * timeForDay) {
-//						timer = 0;
-//						for (World w : Bukkit.getWorlds()) {
-//							w.setTime(12000);
-//						}
-//						day = false;
-//					} else {
-//						day = true;
-//						for (World w : Bukkit.getWorlds()) {
-//							w.setTime((long) (timeInDay * diff));
-//						}
-//					}
-//				} else {
-//					long diff = timer;
-//					timer++;
-//					if (diff > 20 * timeForNight) {
-//						timer = 0;
-//						for (World w : Bukkit.getWorlds()) {
-//							w.setTime(24000);
-//						}
-//						day = true;
-//					} else {
-//						for (World w : Bukkit.getWorlds()) {
-//							w.setTime((long) (timeInNight * diff) + 12000);
-//						}
-//					}
-//				}
-//			}
 
 		};
 		r.runTaskTimer(this, 0, 1);
+		getCommand("tsday").setTabCompleter(new TabCompleter() {
 
+			@Override
+			public List<String> onTabComplete(CommandSender p, Command c, String label, String[] args) {
+				ArrayList<String> res = new ArrayList<>();
+				if (args.length == 0) {
+					res.add("set");
+					res.add("modify");
+					return res;
+				} else if (args.length == 1) {
+					if (args[0].equals("set") || args[0].equals("modify")) {
+						if (args[0].equals("modify")) {
+							res.add("day");
+							res.add("night");
+						}
+					} else {
+						if (match(args[0], "set")) {
+							res.add("set");
+						}
+
+						if (match(args[0], "modify")) {
+							res.add("modify");
+						}
+					}
+				} else if (args.length == 2) {
+					if (args[0].equals("modify")) {
+						if (match(args[1], "day")) {
+							res.add("day");
+						}
+						if (match(args[1], "night")) {
+							res.add("night");
+						}
+					}
+				}
+
+				return res;
+			}
+		});
 	}
 
-	private boolean match(String s, String mustMatch, String other) {
+	private boolean match(String s, String other) {
 
-		for (int i = 0; i < mustMatch.length(); i++) {
-			if (s.charAt(i) != mustMatch.charAt(i)) {
+		for (int i = 0; i < s.length(); i++) {
+			if (other.length() <= i) {
+				return false;
+			} else if (s.charAt(i) != other.charAt(i)) {
 				return false;
 			}
 		}
-		if (s.length() > mustMatch.length()) {
-			for (int i = mustMatch.length(); i < s.length(); i++) {
-				if (other.length() <= i) {
-					return false;
-				} else if (s.charAt(i) != other.charAt(i - mustMatch.length())) {
-					return false;
-				}
-			}
-		} else {
-			return false;
-		}
-		return true;
-	}
 
-	@EventHandler
-	public void onTab(PlayerChatTabCompleteEvent ev) {
-		if (match(ev.getChatMessage(), "tsday modify ", "day")) {
-			ev.getTabCompletions().add("tsday modify day");
-		}
-		if (match(ev.getChatMessage(), "tsday modify ", "night")) {
-			ev.getTabCompletions().add("tsday modify night");
-		}
-		if (match(ev.getChatMessage(), "tsday ", "set")) {
-			ev.getTabCompletions().add("tsday set");
-		}
-		if (match(ev.getChatMessage(), "tsday ", "modify")) {
-			ev.getTabCompletions().add("tsday modify");
-		}
-		if (match(ev.getChatMessage(), "", "tsday")) {
-			ev.getTabCompletions().add("tsday");
-		}
+		return true;
 	}
 
 	@EventHandler
@@ -246,7 +199,7 @@ public class Time extends JavaPlugin implements Listener {
 	public static String con(double val) {
 		float v = (float) (val - Math.floor(val));
 		val -= v;
-		v *= Math.pow(10, (v + "").length()-2);
+		v *= Math.pow(10, (v + "").length() - 2);
 		int m = (int) (val / 60);
 		int s = (int) (val - m * 60);
 		int h = m / 60;
