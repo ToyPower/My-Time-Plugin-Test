@@ -17,30 +17,33 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Time extends JavaPlugin implements Listener {
-	HashMap<String, Double> tfd = new HashMap<>();
-	HashMap<String, Double> tfn = new HashMap<>();
-	HashMap<String, Long> nt = new HashMap<>();
+	HashMap<String, WorldData> worldData = new HashMap<>();
 
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
 		BukkitRunnable r = new BukkitRunnable() {
 			private boolean day = true;
-			HashMap<String, Double> worldData = new HashMap<>();
 
 			public void run() {
+
 				for (World w : Bukkit.getWorlds()) {
-					String name = w.getName();
-					if (!tfd.containsKey(name)) {
-						tfd.put(name, 60 * 10.0);
-						tfn.put(name, 60 * 10.0);
+					if (!worldData.containsKey(w.getName())) {
+						WorldData wd = new WorldData();
+						wd.timeForDayToEnd = 60 * 10;
+						wd.timeForNightToEnd = 60 * 10;
+						wd.changer = -1;
+						worldData.put(w.getName(), wd);
 					}
-					double dayCalc = 12700.0 / (20 * tfd.get(name));
-					double nightCalc = 12000.0 / (20 * tfn.get(name));
-					double time = worldData.getOrDefault(name, 0.0);
-					if (nt.containsKey(name)) {
-						long l = nt.get(name);
-						nt.remove(name);
+					WorldData wd = worldData.get(w.getName());
+					String name = w.getName();
+
+					double dayCalc = 12700.0 / (20 * wd.timeForDayToEnd);
+					double nightCalc = 12000.0 / (20 * wd.timeForNightToEnd);
+					double time = wd.timer;
+					if (wd.changer != -1) {
+						long l = wd.changer;
+						wd.changer = -1;
 						if (l > 12000) {
 							day = false;
 							l -= 12000;
@@ -50,11 +53,11 @@ public class Time extends JavaPlugin implements Listener {
 							time = l / dayCalc;
 						}
 					}
-					if (day && time > 20 * tfd.get(name)) {
+					if (day && time > 20 * wd.timeForDayToEnd) {
 						time = 0;
 						day = false;
 					}
-					if (!day && time > 20 * tfn.get(name)) {
+					if (!day && time > 20 * wd.timeForNightToEnd) {
 						time = 0;
 						day = true;
 					}
@@ -64,7 +67,6 @@ public class Time extends JavaPlugin implements Listener {
 						w.setTime((long) (time * nightCalc) + 12000);
 					}
 					time++;
-					worldData.put(name, time);
 				}
 			}
 
@@ -136,7 +138,8 @@ public class Time extends JavaPlugin implements Listener {
 							if (num < 0) {
 								num = -num;
 							}
-							nt.put(p.getWorld().getName(), num);
+							WorldData wd = worldData.get(p.getWorld().getName());
+							wd.changer = num;
 							p.sendMessage("§bWorld " + p.getWorld().getName() + "'s time set to " + num + "!");
 						} catch (Exception ex) {
 							p.sendMessage("§c" + data[2] + " is not a number that is of type int");
@@ -153,8 +156,10 @@ public class Time extends JavaPlugin implements Listener {
 									if (num < 0) {
 										num = -num;
 									}
-									tfd.put(p.getWorld().getName(), num);
-									nt.put(p.getWorld().getName(), p.getWorld().getTime());
+									WorldData wd = worldData.get(p.getWorld().getName());
+									wd.changer = p.getWorld().getTime();
+									wd.timeForDayToEnd = num;
+
 									p.sendMessage("§bWorld " + p.getWorld().getName()
 											+ "'s day time is now set to be arround " + con(num));
 								} catch (Exception ex) {
@@ -170,8 +175,9 @@ public class Time extends JavaPlugin implements Listener {
 									if (num < 0) {
 										num = -num;
 									}
-									tfn.put(p.getWorld().getName(), num);
-									nt.put(p.getWorld().getName(), p.getWorld().getTime());
+									WorldData wd = worldData.get(p.getWorld().getName());
+									wd.changer = p.getWorld().getTime();
+									wd.timeForNightToEnd = num;
 									p.sendMessage("§bWorld " + p.getWorld().getName()
 											+ "'s night time is now set to be arround " + con(num));
 								} catch (Exception ex) {
