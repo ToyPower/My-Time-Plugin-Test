@@ -108,11 +108,13 @@ public class Time extends JavaPlugin implements Listener {
 				} else if (args.length == 4) {
 					if (args[0].equals("modify")) {
 						if (match(args[1], "day") || match(args[1], "night")) {
+							res.add("millaseconds");
+							res.add("ticks");
 							res.add("seconds");
 							res.add("minutes");
 							res.add("hours");
 							res.add("days");
-							res.add("millaseconds");
+							
 						}
 					}
 				}
@@ -177,9 +179,12 @@ public class Time extends JavaPlugin implements Listener {
 											num /= 20.0;
 										} else if (data[4].equals("seconds") || data[4].equals("second")) {
 
+										} else if (data[4].equals("millaseconds") || data[4].equals("millasecond")) {
+											num /= 1000;
 										} else {
 											p.sendMessage("§cUnknown time unit " + data[4]
 													+ "! Please use seconds, minutes, hours, days, or ticks.");
+											e.setCancelled(true);
 											return;
 										}
 									}
@@ -213,9 +218,12 @@ public class Time extends JavaPlugin implements Listener {
 											num /= 20.0;
 										} else if (data[4].equals("seconds") || data[4].equals("second")) {
 
+										} else if (data[4].equals("millaseconds") || data[4].equals("millasecond")) {
+											num /= 1000;
 										} else {
 											p.sendMessage("§cUnknown time unit " + data[4]
 													+ "! Please use seconds, minutes, hours, days, or ticks.");
+											e.setCancelled(true);
 											return;
 										}
 									}
