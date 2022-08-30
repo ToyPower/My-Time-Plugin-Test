@@ -7,4 +7,4 @@ commands:
     description: Sets the time or modify time schedule
     aliases: [tsday, tsd]
     permission: op
-    usage: "Usage: /tsday [set|modify] [number|day|night] [number]"
+    usage: "Usage: /tsday [set|modify] [number|day|night] <[number]>"

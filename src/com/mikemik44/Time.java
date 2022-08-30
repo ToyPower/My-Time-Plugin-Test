@@ -114,7 +114,7 @@ public class Time extends JavaPlugin implements Listener {
 							res.add("minutes");
 							res.add("hours");
 							res.add("days");
-							
+
 						}
 					}
 				}
@@ -137,55 +137,53 @@ public class Time extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	@EventHandler
-	public void onCommand(PlayerCommandPreprocessEvent e) {
-		String[] data = e.getMessage().split(" ");
-		Player p = e.getPlayer();
-		if (data[0].equals("/tsday")) {
-			if (data.length > 1) {
-				if (data[1].equals("set")) {
-					if (data.length > 2) {
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] data) {
+		if (label.equals("tsday") || label.equals("tsd")) {
+			Player p = (Player) sender;
+			if (data.length > 0) {
+				if (data[0].equals("set")) {
+					if (data.length > 1) {
 						try {
-							long num = Long.parseLong(data[2]);
+							long num = Long.parseLong(data[1].trim());
 							if (num < 0) {
 								num = -num;
 							}
 							WorldData wd = worldData.get(p.getWorld().getName());
 							wd.changer = num;
-							p.sendMessage("§bWorld " + p.getWorld().getName() + "'s time set to " + num + "!");
+							p.sendMessage("§bWorld " + p.getWorld().getName() + "'s game time set to " + num + "!");
 						} catch (Exception ex) {
-							p.sendMessage("§c" + data[2] + " is not a number that is of type int");
+							p.sendMessage("§c" + data[1] + " is not a number that is of type int");
 						}
 					} else {
 						p.sendMessage("§cyou need to provide a number to set the time of day");
 					}
-				} else if (data[1].equals("modify")) {
-					if (data.length > 2) {
-						if (data[2].equals("day")) {
-							if (data.length > 3) {
+				} else if (data[0].equals("modify")) {
+					if (data.length > 1) {
+						if (data[1].equals("day")) {
+							if (data.length > 2) {
 								try {
-									double num = Double.parseDouble(data[3]);
+									double num = Double.parseDouble(data[2].trim());
 									if (num < 0) {
 										num = -num;
 									}
-									if (data.length > 4) {
-										if (data[4].equals("minutes") || data[4].equals("minute")) {
+									if (data.length > 3) {
+										if (data[3].equals("minutes") || data[3].equals("minute")) {
 											num *= 60;
-										} else if (data[4].equals("hours") || data[4].equals("hour")) {
+										} else if (data[3].equals("hours") || data[3].equals("hour")) {
 											num *= 60 * 60;
-										} else if (data[4].equals("days") || data[4].equals("day")) {
+										} else if (data[3].equals("days") || data[3].equals("day")) {
 											num *= 60 * 60 * 24;
-										} else if (data[4].equals("ticks") || data[4].equals("tick")) {
+										} else if (data[3].equals("ticks") || data[3].equals("tick")) {
 											num /= 20.0;
-										} else if (data[4].equals("seconds") || data[4].equals("second")) {
+										} else if (data[3].equals("seconds") || data[3].equals("second")) {
 
-										} else if (data[4].equals("millaseconds") || data[4].equals("millasecond")) {
+										} else if (data[3].equals("millaseconds") || data[3].equals("millasecond")) {
 											num /= 1000;
 										} else {
-											p.sendMessage("§cUnknown time unit " + data[4]
-													+ "! Please use seconds, minutes, hours, days, or ticks.");
-											e.setCancelled(true);
-											return;
+											p.sendMessage("§cUnknown time unit \"" + data[3]
+													+ "\"! Please use seconds, minutes, hours, days, or ticks.");
+											return true;
 										}
 									}
 									WorldData wd = worldData.get(p.getWorld().getName());
@@ -195,36 +193,35 @@ public class Time extends JavaPlugin implements Listener {
 									p.sendMessage("§bWorld " + p.getWorld().getName()
 											+ "'s day time is now set to be arround " + con(num));
 								} catch (Exception ex) {
-									p.sendMessage("§c" + data[3] + " is not a number");
+									p.sendMessage("§c\"" + data[2] + "\" is not a number");
 								}
 							} else {
 								p.sendMessage("§c Please provide a number");
 							}
-						} else if (data[2].equals("night")) {
-							if (data.length > 3) {
+						} else if (data[1].equals("night")) {
+							if (data.length > 2) {
 								try {
-									double num = Double.parseDouble(data[3]);
+									double num = Double.parseDouble(data[2].trim());
 									if (num < 0) {
 										num = -num;
 									}
-									if (data.length > 4) {
-										if (data[4].equals("minutes") || data[3].equals("minute")) {
+									if (data.length > 3) {
+										if (data[3].equals("minutes") || data[3].equals("minute")) {
 											num *= 60;
-										} else if (data[4].equals("hours") || data[4].equals("hour")) {
+										} else if (data[3].equals("hours") || data[3].equals("hour")) {
 											num *= 60 * 60;
-										} else if (data[4].equals("days") || data[4].equals("day")) {
+										} else if (data[3].equals("days") || data[3].equals("day")) {
 											num *= 60 * 60 * 24;
-										} else if (data[4].equals("ticks") || data[4].equals("tick")) {
+										} else if (data[3].equals("ticks") || data[3].equals("tick")) {
 											num /= 20.0;
-										} else if (data[4].equals("seconds") || data[4].equals("second")) {
+										} else if (data[3].equals("seconds") || data[3].equals("second")) {
 
-										} else if (data[4].equals("millaseconds") || data[4].equals("millasecond")) {
+										} else if (data[3].equals("millaseconds") || data[3].equals("millasecond")) {
 											num /= 1000;
 										} else {
-											p.sendMessage("§cUnknown time unit " + data[4]
-													+ "! Please use seconds, minutes, hours, days, or ticks.");
-											e.setCancelled(true);
-											return;
+											p.sendMessage("§cUnknown time unit \"" + data[3]
+													+ "\"! Please use seconds, minutes, hours, days, or ticks.");
+											return true;
 										}
 									}
 									WorldData wd = worldData.get(p.getWorld().getName());
@@ -233,25 +230,26 @@ public class Time extends JavaPlugin implements Listener {
 									p.sendMessage("§bWorld " + p.getWorld().getName()
 											+ "'s night time is now set to be arround " + con(num));
 								} catch (Exception ex) {
-									p.sendMessage("§c" + data[3] + " is not a number");
+									p.sendMessage("§c\"" + data[2] + "\" is not a number");
 								}
 							} else {
-								p.sendMessage("§c Please provide a number");
+								p.sendMessage("§cPlease provide a number");
 							}
 						} else {
-							p.sendMessage("§cUnknown parameter " + data[2] + "! Correct params are day or night");
+							p.sendMessage("§cUnknown parameter " + data[1] + "! Correct params are day or night");
 						}
 					} else {
 						p.sendMessage("§cyou need to put what timing your modifying day or night");
 					}
 				} else {
-					p.sendMessage("§cUnknown parameter " + data[1] + "! correct parameters are \"set\" and \"modify\"");
+					p.sendMessage("§cUnknown parameter " + data[0] + "! correct parameters are \"set\" and \"modify\"");
 				}
 			} else {
 				p.sendMessage("§cparameters are \"set\" and \"modify\"");
 			}
-			e.setCancelled(true);
+			return true;
 		}
+		return false;
 	}
 
 	public static String con(double val) {
