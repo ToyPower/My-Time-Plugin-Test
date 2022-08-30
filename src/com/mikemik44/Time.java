@@ -36,7 +36,6 @@ public class Time extends JavaPlugin implements Listener {
 						worldData.put(w.getName(), wd);
 					}
 					WorldData wd = worldData.get(w.getName());
-					String name = w.getName();
 
 					double dayCalc = 12700.0 / (20 * wd.timeForDayToEnd);
 					double nightCalc = 12000.0 / (20 * wd.timeForNightToEnd);
@@ -67,6 +66,7 @@ public class Time extends JavaPlugin implements Listener {
 						w.setTime((long) (time * nightCalc) + 12000);
 					}
 					time++;
+					wd.timer = time;
 				}
 			}
 
